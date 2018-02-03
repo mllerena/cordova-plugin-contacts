@@ -20,6 +20,10 @@
 -->
 # Release Notes
 
+### 3.1.0 (Feb 2, 2018)
+* Converted iOS portion of plugin to Swift from Objective-C
+* Converted iOS portion of plugin to Contacts from Address Book
+
 ### 3.0.1 (Dec 15, 2017)
 * [CB-13062](https://issues.apache.org/jira/browse/CB-13062): Deprecated this plugin. Added notice to README.md
 

@@ -21,10 +21,6 @@ description: Manage the contacts on the device.
 #         under the License.
 -->
 
-|AppVeyor|Travis CI|
-|:-:|:-:|
-|[![Build status](https://ci.appveyor.com/api/projects/status/github/apache/cordova-plugin-contacts?branch=master)](https://ci.appveyor.com/project/ApacheSoftwareFoundation/cordova-plugin-contacts)|[![Build Status](https://travis-ci.org/apache/cordova-plugin-contacts.svg?branch=master)](https://travis-ci.org/apache/cordova-plugin-contacts)|
-
 # cordova-plugin-contacts
 
 This plugin defines a global `navigator.contacts` object, which provides access to the device contacts database.
@@ -36,6 +32,11 @@ function onDeviceReady() {
 console.log(navigator.contacts);
 }
 ```
+
+## AS-IS Notice
+
+This fork of the cordova contacts plugin has had the iOS portion of its code converted to Swift and Contacts from Objective-C and Address Book. The only well tested portion of that code is the search and contact to/from dictionary conversion as that is my primary use of the plugin in my project. The apache/cordova-plugin-contacts base for this plugin has been deprecated. Further work may or may not be done on this plugin by myself. You can use this plugin and it may work for your needs as-is. It may or may not work in the future and any more arising issues might not be fixed by myself or the Cordova community. USE AT YOUR OWN RISK.
+
 
 __WARNING__: Collection and use of contact data raises
 important privacy issues.  Your app's privacy policy should discuss
@@ -56,24 +57,17 @@ contact data.  For more information, please see the [Privacy Guide](http://cordo
 
 Report issues with this plugin on the [Apache Cordova issue tracker](https://issues.apache.org/jira/issues/?jql=project%20%3D%20CB%20AND%20status%20in%20%28Open%2C%20%22In%20Progress%22%2C%20Reopened%29%20AND%20resolution%20%3D%20Unresolved%20AND%20component%20%3D%20%22Plugin%20Contacts%22%20ORDER%20BY%20priority%20DESC%2C%20summary%20ASC%2C%20updatedDate%20DESC)
 
-## Deprecation Notice
-
-This plugin is being deprecated. No more work will be done on this plugin by the Cordova development community. You can continue to use this plugin and it should work as-is in the future but any more arising issues will not be fixed by the Cordova community.
 
 ## Installation
 
 This requires cordova 5.0+ ( current stable v1.0.0 )
 
-    cordova plugin add cordova-plugin-contacts
-Older versions of cordova can still install via the __deprecated__ id ( stale v0.2.16 )
-
-    cordova plugin add org.apache.cordova.contacts
-It is also possible to install via repo url directly ( unstable )
-
-    cordova plugin add https://github.com/apache/cordova-plugin-contacts.git
+    cordova plugin add https://github.com/timholbrook/cordova-plugin-contacts.git
 
 
 ### iOS Quirks
+
+This plugin requires a bridging header on iOS including #import <Cordova/CDV.h> and #import <Cordova/CDVPlugin.h>
 
 Since iOS 10 it's mandatory to provide an usage description in the `info.plist` if trying to access privacy-sensitive data. When the system prompts the user to allow access, this usage description string will displayed as part of the permission dialog box, but if you didn't provide the usage description, the app will crash before showing the dialog. Also, Apple will reject apps that access private data but don't provide an usage description.
 

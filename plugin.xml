@@ -24,14 +24,14 @@
     xmlns:m3="http://schemas.microsoft.com/appx/2014/manifest"
     xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
     id="cordova-plugin-contacts"
-    version="3.0.2-dev">
+    version="3.1.0">
 
     <name>Contacts</name>
     <description>Cordova Contacts Plugin</description>
     <license>Apache 2.0</license>
     <keywords>cordova,contacts</keywords>
-    <repo>https://git-wip-us.apache.org/repos/asf/cordova-plugin-contacts.git</repo>
-    <issue>https://issues.apache.org/jira/browse/CB/component/12320652</issue>
+    <repo>https://github.com/timholbrook/cordova-plugin-contacts.git</repo>
+    <issue>https://github.com/timholbrook/cordova-plugin-contacts/issues</issue>
 
     <engines>
         <engine name="cordova-android" version=">=6.3.0" />
