@@ -1,8 +1,4 @@
 module.exports = function(ctx) {
-    // make sure ios platform is part of build
-    if (ctx.opts.platforms.indexOf('ios') < 0) {
-        return;
-    }
     var fs = ctx.requireCordovaModule('fs'),
         path = ctx.requireCordovaModule('path'),
 		childProcess = ctx.requireCordovaModule( 'child_process' )
