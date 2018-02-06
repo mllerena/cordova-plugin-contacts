@@ -58,7 +58,7 @@
   "cordova": {
     "plugins": {
       "cordova-plugin-add-swift-support": {
-        "USESWIFTLANGUAGEVERSION": "4"
+        "USESWIFTLANGUAGEVERSION": 4
       }
   	}
   },
