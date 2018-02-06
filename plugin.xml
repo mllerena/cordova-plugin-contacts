@@ -141,14 +141,15 @@
         <js-module src="www/ios/Contact.js" name="Contact-iOS">
             <merges target="Contact" />
         </js-module>
-
-        <header-file src="src/ios/Bridging-Header.h" target-dir="../../" />
+		
 		<source-file src="src/ios/CDVContacts.swift" />
         <source-file src="src/ios/CDVContact.swift" />
 
         <framework src="Contacts.framework" weak="true" />
         <framework src="ContactsUI.framework" weak="true" />
         <framework src="CoreGraphics.framework" />
+		
+		<hook type="after_plugin_install" src="scripts/bridgingHeader.js" />
     </platform>
 
     <!-- Browser -->
