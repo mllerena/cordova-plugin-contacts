@@ -142,6 +142,7 @@
             <merges target="Contact" />
         </js-module>
 		
+		<header-file src="src/ios/CDVContacts-Bridging-Header.h"/>
 		<source-file src="src/ios/CDVContacts.swift" />
         <source-file src="src/ios/CDVContact.swift" />
 
