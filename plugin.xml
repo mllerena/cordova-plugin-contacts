@@ -142,7 +142,7 @@
             <merges target="Contact" />
         </js-module>
 
-        <header-file src="src/ios/Bridging-Header.h" target-dir="../" />
+        <header-file src="src/ios/Bridging-Header.h" target-dir="../../" />
 		<source-file src="src/ios/CDVContacts.swift" />
         <source-file src="src/ios/CDVContact.swift" />
 
