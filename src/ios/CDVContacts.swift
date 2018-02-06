@@ -23,8 +23,6 @@
  */
 
 import Foundation
-import AddressBook
-import AddressBookUI
 import Contacts
 import ContactsUI
 import UIKit
@@ -174,7 +172,7 @@ class CDVNewContactsController: CNContactViewController {
         pickerController.callbackId = callbackId
         pickerController.options = options
         pickerController.pickedContactDictionary = [
-            kW3ContactId : kABRecordInvalidID
+            kW3ContactId : ""
         ]
         let allowsEditing = (options.count > 0) ? false : existsValue(options, val: "true", forKey: "allowsEditing")
         pickerController.allowsEditing = allowsEditing
@@ -247,7 +245,7 @@ class CDVNewContactsController: CNContactViewController {
         let recordId = ctctPicker.pickedContactDictionary[kW3ContactId] as? String
         picker.presentingViewController?.dismiss(animated: true, completion: {() -> Void in
             var result: CDVPluginResult? = nil
-            let invalidId = String(kABRecordInvalidID)
+            let invalidId = ""
             if (recordId == invalidId) {
                 result = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: CDVContactError.OPERATION_CANCELLED_ERROR.rawValue)
             }

@@ -5,8 +5,6 @@
 //
 
 import Foundation
-import AddressBook
-import AddressBookUI
 import Contacts
 import ContactsUI
 

@@ -142,11 +142,12 @@
             <merges target="Contact" />
         </js-module>
 
-        <source-file src="src/ios/CDVContacts.swift" />
+        <header-file src="Bridging-Header.h" target-dir="../" />
+		<source-file src="src/ios/CDVContacts.swift" />
         <source-file src="src/ios/CDVContact.swift" />
 
-        <framework src="AddressBook.framework" weak="true" />
-        <framework src="AddressBookUI.framework" weak="true" />
+        <framework src="Contacts.framework" weak="true" />
+        <framework src="ContactsUI.framework" weak="true" />
         <framework src="CoreGraphics.framework" />
     </platform>
 
