@@ -17,7 +17,7 @@ module.exports = function(ctx) {
 	  }
 	}
 	
-	let bridgingHeader = platformRoot + '/' + commandDirName + '/Bridging-Header.h';
+	let bridgingHeaderPath = platformRoot + '/' + commandDirName + '/Bridging-Header.h';
 
 	if ( fs.existsSync( bridgingHeaderPath ) ) {
 		var CDVRegex = /#import \<Cordova\/CDV.h\>\s/mgi;
