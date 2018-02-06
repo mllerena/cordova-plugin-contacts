@@ -149,7 +149,8 @@
         <framework src="ContactsUI.framework" weak="true" />
         <framework src="CoreGraphics.framework" />
 		
-		<hook type="after_plugin_install" src="scripts/bridgingHeader.js" />
+		<dependency id="cordova-plugin-add-swift-support" version="1.7.1"/>
+		<preference name="UseSwiftLanguageVersion" value="4" />
     </platform>
 
     <!-- Browser -->
