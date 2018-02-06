@@ -150,7 +150,6 @@
         <framework src="ContactsUI.framework" weak="true" />
         <framework src="CoreGraphics.framework" />
 		
-		<preference name="UseSwiftLanguageVersion" value="4" />
 		<dependency id="cordova-plugin-add-swift-support" version="1.7.1"/>
     </platform>
 
