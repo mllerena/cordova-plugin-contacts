@@ -142,10 +142,8 @@
             <merges target="Contact" />
         </js-module>
 
-        <header-file src="src/ios/CDVContacts.h" />
-        <source-file src="src/ios/CDVContacts.m" />
-        <header-file src="src/ios/CDVContact.h" />
-        <source-file src="src/ios/CDVContact.m" />
+        <source-file src="src/ios/CDVContacts.swift" />
+        <source-file src="src/ios/CDVContact.swift" />
 
         <framework src="AddressBook.framework" weak="true" />
         <framework src="AddressBookUI.framework" weak="true" />
