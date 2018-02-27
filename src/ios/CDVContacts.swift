@@ -220,7 +220,6 @@ class CDVNewContactsController: CNContactViewController {
     }
     
     func contactPickerDidCancel(_ picker: CNContactPickerViewController) {
-        checkContactPermission()
         // return contactId or invalid if none picked
         let ctctPicker: CDVContactsPicker = picker as! CDVContactsPicker
         
@@ -258,10 +257,9 @@ class CDVNewContactsController: CNContactViewController {
     
     // Called after a person has been selected by the user.
     func contactPicker(_ picker: CNContactPickerViewController, didSelect contact: CNContact) {
-        checkContactPermission()
         let ctctPicker = picker as! CDVContactsPicker
         let pickedId = contact.identifier
-        if ctctPicker.allowsEditing != nil {
+        if (ctctPicker.allowsEditing == nil || ctctPicker.allowsEditing == true) {
             let personController = CNContactViewController(for: contact)
             personController.delegate = self
             personController.allowsEditing = ctctPicker.allowsEditing ?? false
@@ -270,8 +268,7 @@ class CDVNewContactsController: CNContactViewController {
                 kW3ContactId : pickedId
             ]
             picker.navigationController?.pushViewController(personController, animated: true)
-        }
-        else {
+        } else {
             // Retrieve and return pickedContact information
             let pickedContact = CDVContact(fromCNContact: contact)
             var fields: [Any] = [Any]()
@@ -339,7 +336,7 @@ class CDVNewContactsController: CNContactViewController {
                         try? CNContactStore().enumerateContacts(with: fetchRequest, usingBlock: {(contact: CNContact, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
                             // create Contacts and put into matches array
                             // doesn't make sense to ask for all records when multiple == NO but better check
-                            if multiple {
+                            if !multiple {
                                 if matches.count == 1 {
                                     return
                                 }
