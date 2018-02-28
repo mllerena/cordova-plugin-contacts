@@ -64,7 +64,7 @@ var contacts = {
      * This function picks contact from phone using contact picker UI
      * @returns new Contact object
      */
-    pickContact: function (successCB, errorCB) {
+    pickContact: function (fields, successCB, errorCB, options) {
 
         argscheck.checkArgs('fF', 'contacts.pick', arguments);
 
@@ -74,7 +74,7 @@ var contacts = {
             var contact = result instanceof Contact ? result : contacts.create(result);
             successCB(convertUtils.toCordovaFormat(contact));
         };
-        exec(win, errorCB, "Contacts", "pickContact", []);
+        exec(win, errorCB, "Contacts", "pickContact", [fields, options]);
     },
 
     /**

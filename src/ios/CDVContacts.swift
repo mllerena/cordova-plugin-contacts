@@ -174,6 +174,17 @@ class CDVNewContactsController: CNContactViewController {
         pickerController.pickedContactDictionary = [
             kW3ContactId : ""
         ]
+        for field in options {
+            if let string = field.value as? String {
+                if string == "emails" {
+                    print("Found email feild in options.")
+                    pickerController.displayedPropertyKeys = [CNContactEmailAddressesKey];
+                    pickerController.predicateForEnablingContact = NSPredicate(format: "emailAddresses.@count > 0")
+                    pickerController.predicateForSelectionOfContact = NSPredicate(format: "emailAddresses.@count == 1")
+                    pickerController.predicateForSelectionOfProperty = NSPredicate(format: "key == 'emailAddresses'")
+                }
+            }
+        }
         let allowsEditing = (options.count > 0) ? false : existsValue(options, val: "true", forKey: "allowsEditing")
         pickerController.allowsEditing = allowsEditing
         viewController.present(pickerController, animated: true) {() -> Void in }
@@ -189,8 +200,7 @@ class CDVNewContactsController: CNContactViewController {
         var options = [AnyHashable: Any](minimumCapacity: 2)
         options["fields"] = desiredFields
         options["allowsEditing"] = (0)
-        let args = [options]
-        let newCommand = CDVInvokedUrlCommand(arguments: args, callbackId: command.callbackId, className: command.className, methodName: command.methodName)
+        let newCommand = CDVInvokedUrlCommand(arguments: desiredFields, callbackId: command.callbackId, className: command.className, methodName: command.methodName)
         // First check for Address book permissions
         let status = CNContactStore.authorizationStatus(for: .contacts)
         if status == .authorized {
@@ -257,6 +267,7 @@ class CDVNewContactsController: CNContactViewController {
     
     // Called after a person has been selected by the user.
     func contactPicker(_ picker: CNContactPickerViewController, didSelect contact: CNContact) {
+        print("Did select contact.")
         let ctctPicker = picker as! CDVContactsPicker
         let pickedId = contact.identifier
         if (ctctPicker.allowsEditing == nil || ctctPicker.allowsEditing == true) {
@@ -286,8 +297,17 @@ class CDVNewContactsController: CNContactViewController {
     
     // Called after a property has been selected by the user.
     func contactPicker(_ picker: CNContactPickerViewController, didSelect contactProperty: CNContactProperty) {
-        checkContactPermission()
-        // not implemented
+        print("Did select property.")
+        let ctctPicker = picker as! CDVContactsPicker
+        let pickedContact = CDVContact(fromCNContact: contactProperty.contact)
+        var returnValue: [AnyHashable:Any] = [:]
+        if contactProperty.key == CNContactEmailAddressesKey {
+            returnValue[kW3ContactEmails] = pickedContact.extractMultiValue(kW3ContactEmails)
+        }
+        ctctPicker.presentingViewController?.dismiss(animated: true, completion: {() -> Void in
+            let result = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: returnValue)
+            self.commandDelegate.send(result, callbackId: ctctPicker.callbackId)
+        })
     }
     
     func search(_ command: CDVInvokedUrlCommand) {
