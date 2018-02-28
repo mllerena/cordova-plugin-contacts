@@ -299,7 +299,7 @@ public class ContactManager extends CordovaPlugin {
                                             contact.put("emails", newEmails);
                                         }
                                     }
-                                    localCallbackContext.success(contact);
+                                    callbackContext.success(contact);
                                     return;
                                 } catch (JSONException err) {
                                     LOG.e(LOG_TAG, "JSON fail.", err);
@@ -326,9 +326,9 @@ public class ContactManager extends CordovaPlugin {
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 callbackContext.error(OPERATION_CANCELLED_ERROR);
                 return;
+            } else {
+                this.callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, UNKNOWN_ERROR));
             }
-
-            this.callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, UNKNOWN_ERROR));
         }
     }
 
