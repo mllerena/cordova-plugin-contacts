@@ -239,6 +239,46 @@ public class ContactManager extends CordovaPlugin {
         if (requestCode == CONTACT_PICKER_RESULT) {
             if (resultCode == Activity.RESULT_OK) {
                 String contactId = intent.getData().getLastPathSegment();
+				
+				// query for emails for the selected contact id
+				e = this.cordova.getActivity().getContentResolver().query(
+				    Email.CONTENT_URI, null,
+				    Email.CONTACT_ID + "=?",
+				    new String[]{id}, null);
+
+				int emailIdx = e.getColumnIndex(Email.ADDRESS);
+				int emailType = e.getColumnIndex(Email.TYPE);
+				String email = "";
+				
+				if(e.getCount() > 1) { // contact has multiple emails
+				    final CharSequence[] emails = new CharSequence[e.getCount()];
+				    int i=0;
+				    if(e.moveToFirst()) {
+				        while(!e.isAfterLast()) { // for each email, add it to the emails array
+				            String type = (String) Email.getTypeLabel(this.getResources(), e.getInt(emailType), ""); // insert a type string in front of the email
+				            String address = type + ": " + e.getString(emailIdx);
+				            emails[i++] = address;
+				            e.moveToNext();
+				        }
+				        // build and show a simple dialog that allows the user to select a email
+				        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				        builder.setTitle(R.string.select_contact_email_and_type);
+				        builder.setItems(emails, new DialogInterface.OnClickListener() {
+
+				            @Override
+				            public void onClick(DialogInterface dialog, int item) {
+				                String email = (String) emails[item];
+				            }
+				        });
+				        AlertDialog alert = builder.create();
+				        alert.setOwnerActivity(this);
+				        alert.show();
+
+				    } else Log.w(TAG, "No results");
+				} else if(e.getCount() == 1) {
+				    // contact has a single phone number, so there's no need to display a second dialog
+				}
+				Log.i(email);
                 // to populate contact data we require  Raw Contact ID
                 // so we do look up for contact raw id first
                 Cursor c =  this.cordova.getActivity().getContentResolver().query(RawContacts.CONTENT_URI,
