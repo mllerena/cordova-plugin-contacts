@@ -30,13 +30,16 @@ import org.json.JSONObject;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.RawContacts;
+import android.support.v7.app.AlertDialog;
 
 import java.lang.reflect.Method;
 
@@ -241,13 +244,13 @@ public class ContactManager extends CordovaPlugin {
                 String contactId = intent.getData().getLastPathSegment();
 				
 				// query for emails for the selected contact id
-				e = this.cordova.getActivity().getContentResolver().query(
-				    Email.CONTENT_URI, null,
-				    Email.CONTACT_ID + "=?",
-				    new String[]{id}, null);
+                Cursor e = this.cordova.getActivity().getContentResolver().query(
+				    ContactsContract.CommonDataKinds.Email.CONTENT_URI, null,
+                        ContactsContract.CommonDataKinds.Email.CONTACT_ID + "=?",
+				    new String[]{contactId}, null);
 
-				int emailIdx = e.getColumnIndex(Email.ADDRESS);
-				int emailType = e.getColumnIndex(Email.TYPE);
+				int emailIdx = e.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS);
+				int emailType = e.getColumnIndex(ContactsContract.CommonDataKinds.Email.TYPE);
 				String email = "";
 				
 				if(e.getCount() > 1) { // contact has multiple emails
@@ -255,14 +258,14 @@ public class ContactManager extends CordovaPlugin {
 				    int i=0;
 				    if(e.moveToFirst()) {
 				        while(!e.isAfterLast()) { // for each email, add it to the emails array
-				            String type = (String) Email.getTypeLabel(this.getResources(), e.getInt(emailType), ""); // insert a type string in front of the email
+				            String type = (String) ContactsContract.CommonDataKinds.Email.getTypeLabel(this.cordova.getActivity().getResources(), e.getInt(emailType), ""); // insert a type string in front of the email
 				            String address = type + ": " + e.getString(emailIdx);
 				            emails[i++] = address;
 				            e.moveToNext();
 				        }
 				        // build and show a simple dialog that allows the user to select a email
-				        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				        builder.setTitle(R.string.select_contact_email_and_type);
+				        AlertDialog.Builder builder = new AlertDialog.Builder(this.cordova.getActivity().getBaseContext());
+				        builder.setTitle("Select an Address");
 				        builder.setItems(emails, new DialogInterface.OnClickListener() {
 
 				            @Override
@@ -271,14 +274,14 @@ public class ContactManager extends CordovaPlugin {
 				            }
 				        });
 				        AlertDialog alert = builder.create();
-				        alert.setOwnerActivity(this);
+				        alert.setOwnerActivity(this.cordova.getActivity());
 				        alert.show();
 
-				    } else Log.w(TAG, "No results");
+				    } else LOG.w(LOG_TAG, "No results");
 				} else if(e.getCount() == 1) {
 				    // contact has a single phone number, so there's no need to display a second dialog
 				}
-				Log.i(email);
+				LOG.i(LOG_TAG, email);
                 // to populate contact data we require  Raw Contact ID
                 // so we do look up for contact raw id first
                 Cursor c =  this.cordova.getActivity().getContentResolver().query(RawContacts.CONTENT_URI,
@@ -294,8 +297,8 @@ public class ContactManager extends CordovaPlugin {
                     JSONObject contact = contactAccessor.getContactById(id);
                     this.callbackContext.success(contact);
                     return;
-                } catch (JSONException e) {
-                    LOG.e(LOG_TAG, "JSON fail.", e);
+                } catch (JSONException err) {
+                    LOG.e(LOG_TAG, "JSON fail.", err);
                 }
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 callbackContext.error(OPERATION_CANCELLED_ERROR);
