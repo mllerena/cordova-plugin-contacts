@@ -66,7 +66,7 @@ var contacts = {
      */
     pickContact: function (fields, successCB, errorCB, options) {
 
-        argscheck.checkArgs('fF', 'contacts.pick', arguments);
+        argscheck.checkArgs('afFO', 'contacts.pick', arguments);
 
         var win = function (result) {
             // if Contacts.pickContact return instance of Contact object
