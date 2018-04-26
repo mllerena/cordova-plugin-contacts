@@ -44,6 +44,15 @@ interface Contacts {
         onError: (error: ContactError) => void): void
 
     /**
+     * The navigator.contacts.pickContacts method launches the Contact Picker to select multiple contacts.
+     * The resulting object is passed to the contactSuccess callback function specified by the contactSuccess parameter.
+     * @param onSuccess Success callback function invoked with the array of Contact objects returned from the database
+     * @param onError Error callback function, invoked when an error occurs.
+     */
+    pickContacts(onSuccess: (contacts: Array<Contact>) => void,
+                onError: (error: ContactError) => void): void
+
+    /**
      * This allows us to use an enumeration when setting the desired fields for the ContactFindOptions.
      * The values will correspond to the type of string literals in ContactFieldType.
      */

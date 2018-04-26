@@ -39,35 +39,35 @@ class CDVNewContactsController: CNContactViewController {
 }
 
 @objc(CDVContacts) class CDVContacts: CDVPlugin, CNContactViewControllerDelegate, CNContactPickerDelegate {
-//    var status: CNAuthorizationStatus = CNContactStore.authorizationStatus(for: .contacts)
+    //    var status: CNAuthorizationStatus = CNContactStore.authorizationStatus(for: .contacts)
     
     static let allContactKeys: [CNKeyDescriptor] = [CNContactIdentifierKey as CNKeyDescriptor,
-                                             CNContactNicknameKey as CNKeyDescriptor,
-                                             CNContactGivenNameKey as CNKeyDescriptor,
-                                             CNContactFamilyNameKey as CNKeyDescriptor,
-                                             CNContactMiddleNameKey as CNKeyDescriptor,
-                                             CNContactNamePrefixKey as CNKeyDescriptor,
-                                             CNContactNameSuffixKey as CNKeyDescriptor,
-                                             CNContactPhoneNumbersKey as CNKeyDescriptor,
-                                             CNContactPostalAddressesKey as CNKeyDescriptor,
-                                             CNPostalAddressStreetKey as CNKeyDescriptor,
-                                             CNPostalAddressCityKey as CNKeyDescriptor,
-                                             CNPostalAddressStateKey as CNKeyDescriptor,
-                                             CNPostalAddressPostalCodeKey as CNKeyDescriptor,
-                                             CNPostalAddressCountryKey as CNKeyDescriptor,
-                                             CNContactEmailAddressesKey as CNKeyDescriptor,
-                                             CNContactInstantMessageAddressesKey as CNKeyDescriptor,
-                                             CNContactOrganizationNameKey as CNKeyDescriptor,
-                                             CNContactJobTitleKey as CNKeyDescriptor,
-                                             CNContactDepartmentNameKey as CNKeyDescriptor,
-                                             CNContactBirthdayKey as CNKeyDescriptor,
-                                             CNContactNoteKey as CNKeyDescriptor,
-                                             CNContactUrlAddressesKey as CNKeyDescriptor,
-                                             CNContactImageDataKey as CNKeyDescriptor,
-                                             CNInstantMessageAddressUsernameKey as CNKeyDescriptor,
-                                             CNInstantMessageAddressServiceKey as CNKeyDescriptor,
-                                             CNContactTypeKey as CNKeyDescriptor,
-                                             CNContactImageDataAvailableKey as CNKeyDescriptor]
+                                                    CNContactNicknameKey as CNKeyDescriptor,
+                                                    CNContactGivenNameKey as CNKeyDescriptor,
+                                                    CNContactFamilyNameKey as CNKeyDescriptor,
+                                                    CNContactMiddleNameKey as CNKeyDescriptor,
+                                                    CNContactNamePrefixKey as CNKeyDescriptor,
+                                                    CNContactNameSuffixKey as CNKeyDescriptor,
+                                                    CNContactPhoneNumbersKey as CNKeyDescriptor,
+                                                    CNContactPostalAddressesKey as CNKeyDescriptor,
+                                                    CNPostalAddressStreetKey as CNKeyDescriptor,
+                                                    CNPostalAddressCityKey as CNKeyDescriptor,
+                                                    CNPostalAddressStateKey as CNKeyDescriptor,
+                                                    CNPostalAddressPostalCodeKey as CNKeyDescriptor,
+                                                    CNPostalAddressCountryKey as CNKeyDescriptor,
+                                                    CNContactEmailAddressesKey as CNKeyDescriptor,
+                                                    CNContactInstantMessageAddressesKey as CNKeyDescriptor,
+                                                    CNContactOrganizationNameKey as CNKeyDescriptor,
+                                                    CNContactJobTitleKey as CNKeyDescriptor,
+                                                    CNContactDepartmentNameKey as CNKeyDescriptor,
+                                                    CNContactBirthdayKey as CNKeyDescriptor,
+                                                    CNContactNoteKey as CNKeyDescriptor,
+                                                    CNContactUrlAddressesKey as CNKeyDescriptor,
+                                                    CNContactImageDataKey as CNKeyDescriptor,
+                                                    CNInstantMessageAddressUsernameKey as CNKeyDescriptor,
+                                                    CNInstantMessageAddressServiceKey as CNKeyDescriptor,
+                                                    CNContactTypeKey as CNKeyDescriptor,
+                                                    CNContactImageDataAvailableKey as CNKeyDescriptor]
     
     // overridden to clean up Contact statics
     override func onAppTerminate() {
@@ -174,6 +174,9 @@ class CDVNewContactsController: CNContactViewController {
         pickerController.pickedContactDictionary = [
             kW3ContactId : ""
         ]
+        
+        //        pickerController.predicateForSelectionOfContact = NSPredicate(value: true)
+        
         if let fields = commandFields {
             pickerController.fields = fields
             for field in fields {
@@ -259,10 +262,13 @@ class CDVNewContactsController: CNContactViewController {
     }
     
     // Called after a person has been selected by the user.
-    func contactPicker(_ picker: CNContactPickerViewController, didSelect contact: CNContact) {
+    func contactPicker(_ picker: CNContactPickerViewController, didSelect contacts: [CNContact]) {
         let ctctPicker = picker as! CDVContactsPicker
-        let pickedId = contact.identifier
+        
         if (ctctPicker.allowsEditing == nil || ctctPicker.allowsEditing == true) {
+            let contact = contacts[0]
+            let pickedId = contact.identifier
+            
             let personController = CNContactViewController(for: contact)
             personController.delegate = self
             personController.allowsEditing = ctctPicker.allowsEditing ?? false
@@ -272,12 +278,29 @@ class CDVNewContactsController: CNContactViewController {
             ]
             picker.navigationController?.pushViewController(personController, animated: true)
         } else {
-            // Retrieve and return pickedContact information
-            let pickedContact = CDVContact(fromCNContact: contact)
+            // Retrieve and return pickedContacts information
+            var returnContacts = [[AnyHashable: Any]]()
+            var result: [CDVContact] = [CDVContact]()
             let returnFields = CDVContact.self.calcReturnFields(ctctPicker.fields)
-            ctctPicker.pickedContactDictionary = pickedContact.toDictionary(returnFields)
+            
+            for contact in contacts {
+                result.append(CDVContact(fromCNContact: contact))
+            }
+            
+            if (result.count > 0) {
+                // convert to JS Contacts format and return in callback
+                // - returnFields  determines what properties to return
+                autoreleasepool {
+                    let count = Int(result.count)
+                    for i in 0..<count {
+                        returnContacts.append(result[i].toDictionary(returnFields))
+                    }
+                }
+            }
+            
             ctctPicker.presentingViewController?.dismiss(animated: true, completion: {() -> Void in
-                let result = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: ctctPicker.pickedContactDictionary)
+                // return found contacts (array is empty if no contacts found)
+                let result = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: returnContacts)
                 self.commandDelegate.send(result, callbackId: ctctPicker.callbackId)
             })
         }
@@ -537,7 +560,7 @@ class CDVNewContactsController: CNContactViewController {
         }
         return
     }
-
+    
 }
 
 /* ABPersonViewController does not have any UI to dismiss.  Adding navigationItems to it does not work properly
@@ -551,3 +574,4 @@ class CDVDisplayContactViewController: CNContactViewController {
         presentingViewController?.dismiss(animated: true) {() -> Void in }
     }
 }
+

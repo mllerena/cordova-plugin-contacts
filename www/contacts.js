@@ -59,7 +59,7 @@ var contacts = {
             exec(win, errorCB, "Contacts", "search", [fields, options]);
         }
     },
-    
+
     /**
      * This function picks contact from phone using contact picker UI
      * @returns new Contact object
@@ -73,6 +73,27 @@ var contacts = {
             // don't create new Contact object, use current
             var contact = result instanceof Contact ? result : contacts.create(result);
             successCB(convertUtils.toCordovaFormat(contact));
+        };
+        exec(win, errorCB, "Contacts", "pickContact", [fields, options]);
+    },
+
+    /**
+     * This function picks contact from phone using contact picker UI
+     * @returns new Contact object
+     */
+    pickContacts: function (fields, successCB, errorCB, options) {
+
+        argscheck.checkArgs('afFO', 'contacts.pick', arguments);
+
+        var win = function (results) {
+            results.map(function (result) {
+                // if Contacts.pickContact return instance of Contact object
+                // don't create new Contact object, use current
+                var contact = result instanceof Contact ? result : contacts.create(result);
+                return convertUtils.toCordovaFormat(contact);
+            });
+
+            successCB(results);
         };
         exec(win, errorCB, "Contacts", "pickContact", [fields, options]);
     },
