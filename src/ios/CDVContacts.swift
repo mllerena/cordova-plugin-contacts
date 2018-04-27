@@ -39,6 +39,7 @@ class CDVNewContactsController: CNContactViewController {
 }
 
 @objc(CDVContacts) class CDVContacts: CDVPlugin, CNContactViewControllerDelegate, CNContactPickerDelegate {
+    
     //    var status: CNAuthorizationStatus = CNContactStore.authorizationStatus(for: .contacts)
     
     static let allContactKeys: [CNKeyDescriptor] = [CNContactIdentifierKey as CNKeyDescriptor,
@@ -168,6 +169,7 @@ class CDVNewContactsController: CNContactViewController {
         let callbackId: String = command.callbackId
         let commandFields = command.argument(at: 0, withDefault: [Any]()) as? [Any]
         let commandOptions = command.argument(at: 1, withDefault: [AnyHashable: Any]()) as? [AnyHashable: Any]
+        
         let pickerController = CDVContactsPicker()
         pickerController.delegate = self
         pickerController.callbackId = callbackId
@@ -183,7 +185,7 @@ class CDVNewContactsController: CNContactViewController {
                 if let string = field as? String {
                     if string == "emails" {
                         pickerController.displayedPropertyKeys = [CNContactEmailAddressesKey];
-                        pickerController.predicateForEnablingContact = NSPredicate(format: "emailAddresses.@count > 0")
+                        pickerController.predicateForEnablingContact = NSPredicate(format: "emailAddresses.@count > 0 || phoneNumbers.@count > 0")
                         pickerController.predicateForSelectionOfContact = NSPredicate(format: "emailAddresses.@count == 1")
                         pickerController.predicateForSelectionOfProperty = NSPredicate(format: "key == 'emailAddresses'")
                     }
@@ -281,11 +283,13 @@ class CDVNewContactsController: CNContactViewController {
             // Retrieve and return pickedContacts information
             var returnContacts = [[AnyHashable: Any]]()
             var result: [CDVContact] = [CDVContact]()
-            let returnFields = CDVContact.self.calcReturnFields(ctctPicker.fields)
+            
             
             for contact in contacts {
                 result.append(CDVContact(fromCNContact: contact))
             }
+            
+            let returnFields = CDVContact.self.calcReturnFields(ctctPicker.fields)
             
             if (result.count > 0) {
                 // convert to JS Contacts format and return in callback
