@@ -37,19 +37,21 @@ interface Contacts {
     /**
      * The navigator.contacts.pickContact method launches the Contact Picker to select a single contact.
      * The resulting object is passed to the contactSuccess callback function specified by the contactSuccess parameter.
+     * @param fields Array that specifies the desired fields
      * @param onSuccess Success callback function invoked with the array of Contact objects returned from the database
      * @param onError Error callback function, invoked when an error occurs.
      */
-    pickContact(onSuccess: (contact: Contact) => void,
+    pickContact(fields: Array<string>, onSuccess: (contact: Contact) => void,
         onError: (error: ContactError) => void): void
 
     /**
      * The navigator.contacts.pickContacts method launches the Contact Picker to select multiple contacts.
      * The resulting object is passed to the contactSuccess callback function specified by the contactSuccess parameter.
+     * @param fields Array that specifies the desired fields
      * @param onSuccess Success callback function invoked with the array of Contact objects returned from the database
      * @param onError Error callback function, invoked when an error occurs.
      */
-    pickContacts(onSuccess: (contacts: Array<Contact>) => void,
+    pickContacts(fields: Array<string>, onSuccess: (contacts: Array<Contact>) => void,
                 onError: (error: ContactError) => void): void
 
     /**
