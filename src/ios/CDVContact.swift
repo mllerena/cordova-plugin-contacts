@@ -87,7 +87,7 @@ let kW3ContactUrls = "urls"
     var mutableRecord: CNMutableContact? // the CNMutableContact associated with this contact
     var nonMutableRecord: CNContact? // the CNContact associated with this contact
     var returnFields: [AnyHashable: Any]? // dictionary of fields to return when performing search
-
+    
     override init() {
         let rec: CNMutableContact = CNMutableContact()
         self.mutableRecord = rec
@@ -1994,3 +1994,4 @@ let kW3ContactUrls = "urls"
         return bFound
     }
 }
+

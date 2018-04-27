@@ -197,6 +197,8 @@ class CDVNewContactsController: CNContactViewController {
         } else {
             pickerController.allowsEditing = false
         }
+        
+        UISearchBar.appearance().isHidden = true
         viewController.present(pickerController, animated: true) {() -> Void in }
     }
     
