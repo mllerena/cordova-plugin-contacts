@@ -410,7 +410,10 @@ class CDVNewContactsController: CNContactViewController {
                         autoreleasepool {
                             let count = multiple == true ? Int(matches.count) : 1
                             for i in 0..<count {
-                                returnContacts.append(matches[i].toDictionary(returnFields))
+                                let contact = matches[i].toDictionary(returnFields)
+                                if contact[NSNull()] == nil {
+                                    returnContacts.append(contact)
+                                }
                             }
                         }
                     }
