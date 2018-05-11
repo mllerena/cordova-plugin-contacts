@@ -163,8 +163,8 @@ let kW3ContactUrls = "urls"
             kW3ContactBirthday : CNContactBirthdayKey,
             kW3ContactNote : CNContactNoteKey,
             kW3ContactUrls : CNContactUrlAddressesKey,
-            kW3ContactImValue : CNInstantMessageAddressUsernameKey,
-            kW3ContactImType : CNInstantMessageAddressServiceKey,
+            //kW3ContactImValue : CNInstantMessageAddressUsernameKey,
+            //kW3ContactImType : CNInstantMessageAddressServiceKey,
             kW3ContactFieldType : "", /* include entries in dictionary to indicate ContactField properties */
             kW3ContactFieldValue : "",
             kW3ContactFieldPrimary : "",
