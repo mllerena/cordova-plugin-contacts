@@ -34,7 +34,7 @@
     <issue>https://github.com/timholbrook/cordova-plugin-contacts/issues</issue>
 
     <engines>
-        <engine name="cordova-android" version=">=6.3.0" />
+        <engine name="cordova-android" version=">=6.2.2" />
     </engines>
 
     <js-module src="www/contacts.js" name="contacts">
