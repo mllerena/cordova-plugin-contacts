@@ -20,6 +20,9 @@
 -->
 # Release Notes
 
+### 3.1.0-cb (Jun 27, 2019)
+* Upgraded cordova-plugin-add-swift-support dependency to 2.0.2 (it seems to support Swift 4.x)
+
 ### 3.1.0 (Feb 2, 2018)
 * Converted iOS portion of plugin to Swift from Objective-C
 * Converted iOS portion of plugin to Contacts from Address Book
