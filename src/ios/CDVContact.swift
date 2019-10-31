@@ -121,25 +121,10 @@ let kW3ContactUrls = "urls"
             CNContactMiddleNameKey : kW3ContactMiddleName,
             CNContactNamePrefixKey : kW3ContactHonorificPrefix,
             CNContactNameSuffixKey : kW3ContactHonorificSuffix,
-            CNContactPhoneNumbersKey : kW3ContactPhoneNumbers,
-            CNContactPostalAddressesKey : kW3ContactAddresses,
-            CNPostalAddressStreetKey : kW3ContactStreetAddress,
-            CNPostalAddressCityKey : kW3ContactLocality,
-            CNPostalAddressStateKey : kW3ContactRegion,
-            CNPostalAddressPostalCodeKey : kW3ContactPostalCode,
-            CNPostalAddressCountryKey : kW3ContactCountry,
-            CNContactEmailAddressesKey : kW3ContactEmails,
-            CNContactInstantMessageAddressesKey : kW3ContactIms,
-            CNContactOrganizationNameKey : kW3ContactOrganizations,
-            CNContactOrganizationNameKey : kW3ContactOrganizationName,
-            CNContactJobTitleKey : kW3ContactTitle,
-            CNContactDepartmentNameKey : kW3ContactDepartment,
-            CNContactBirthdayKey : kW3ContactBirthday,
-            CNContactUrlAddressesKey : kW3ContactUrls,
-            CNContactNoteKey : kW3ContactNote
+            CNContactPhoneNumbersKey : kW3ContactPhoneNumbers
         ]
     }
-    
+
     class func defaultW3CtoAB() -> [String: String] {
         return [
             kW3ContactNickname : CNContactNicknameKey,
@@ -172,12 +157,12 @@ let kW3ContactUrls = "urls"
             kW3ContactOrganizationName : CNContactOrganizationNameKey
         ]
     }
-    
+
     class func defaultW3CtoNull() -> Set<AnyHashable> {
         // these are values that have no AddressBook Equivalent OR have not been implemented yet
         return Set<AnyHashable>([kW3ContactDisplayName, kW3ContactCategories, kW3ContactFormattedName])
     }
-    
+
     /*
      *    The objectAndProperties dictionary contains the all of the properties of the W3C Contact Objects specified by the key
      *    Used in calcReturnFields, and various extract<Property> methods
@@ -194,7 +179,7 @@ let kW3ContactUrls = "urls"
             kW3ContactIms : [kW3ContactImValue, kW3ContactImType]
         ]
     }
-    
+
     class func defaultFields() -> [String: [String]] {
         return [
             kW3ContactName : CDVContact.defaultObjectAndProperties()[kW3ContactName]!,
@@ -210,7 +195,7 @@ let kW3ContactUrls = "urls"
             kW3ContactNote : []
         ]
     }
-    
+
     /*  Translate W3C Contact data into ABRecordRef
      *
      *    New contact information comes in as a NSMutableDictionary.  All Null entries in Contact object are set
@@ -254,7 +239,7 @@ let kW3ContactUrls = "urls"
                 }
             }
         }
-        
+
         // set phoneNumbers
         // NSLog(@"setting phoneNumbers");
         if let array = aContact[kW3ContactPhoneNumbers] as? [[AnyHashable: Any]] {
@@ -262,135 +247,13 @@ let kW3ContactUrls = "urls"
                 errorCount += 1
             }
         }
-        
-        // set Emails
-        // NSLog(@"setting emails");
-        if let array = aContact[kW3ContactEmails] as? [[AnyHashable: Any]] {
-            if !setMultiValueStrings(array, forProperty: CNContactEmailAddressesKey, asUpdate: bUpdate) {
-                errorCount += 1
-            }
-        }
-        
-        // set Urls
-        // NSLog(@"setting urls");
-        if let array = aContact[kW3ContactUrls] as? [[AnyHashable: Any]] {
-            if !setMultiValueStrings(array, forProperty: CNContactUrlAddressesKey, asUpdate: bUpdate) {
-                errorCount += 1
-            }
-        }
-        
-        // set multivalue dictionary properties
-        // set addresses:  streetAddress, locality, region, postalCode, country
-        // set ims:  value = username, type = servicetype
-        // iOS addresses and im are a MultiValue Properties with label, value=dictionary of  info, and id
-        // NSLog(@"setting addresses");
-        if let array = aContact[kW3ContactAddresses] as? [[AnyHashable: Any]] {
-            if !setMultiValueStrings(array, forProperty: CNContactPostalAddressesKey, asUpdate: bUpdate) {
-                errorCount += 1
-            }
-        }
-        
-        // ims
-        // NSLog(@"setting ims");
-        if let array = aContact[kW3ContactIms] as? [[AnyHashable: Any]] {
-            if !setMultiValueStrings(array, forProperty: CNContactInstantMessageAddressesKey, asUpdate: bUpdate) {
-                errorCount += 1
-            }
-        }
-        
-        // organizations
-        // W3C ContactOrganization has pref, type, name, title, department
-        // iOS only supports name, title, department
-        // NSLog(@"setting organizations");
-        if let array = aContact[kW3ContactOrganizations] as? [[AnyHashable: Any]] {
-            if !setMultiValueStrings(array, forProperty: CNContactOrganizationNameKey, asUpdate: bUpdate) {
-                errorCount += 1
-            }
-        }
-        
-        // add dates
-        // Dates come in as milliseconds in NSNumber Object
-        var aDate: Date? = nil
-        if let ms = aContact[kW3ContactBirthday] as? NSNumber {
-            var msValue = Double(ms)
-            msValue = msValue / 1000
-            aDate = Date(timeIntervalSince1970: msValue as TimeInterval)
-        } else if let ms = aContact[kW3ContactBirthday] as? String {
-            if let msValue = Double(ms) {
-                aDate = Date(timeIntervalSince1970: (msValue / 1000) as TimeInterval)
-            }
-        }
-        if let theDate = aDate {
-            if !setValue(theDate, forDateProperty: CNContactBirthdayKey, asUpdate: bUpdate) {
-                errorCount += 1
-            }
-        }
-        
-        // don't update creation date
-        // modification date will get updated when save
-        // anniversary is removed from W3C Contact api Dec 9, 2010 spec - don't waste time on it yet
-        
-        // kABPersonDateProperty
-        
-        // kABPersonAnniversaryLabel
-        
-        // iOS doesn't have gender - ignore
-        
-        // note
-        if let value = aContact[kW3ContactNote] as? String {
-            if !setValue(value, forStringProperty: CNContactNoteKey, asUpdate: bUpdate) {
-                errorCount += 1
-            }
-        }
-        
-        // iOS doesn't have preferredName- ignore
-        
-        // photo
-        if let array = aContact[kW3ContactPhotos] as? [Any] {
-            if bUpdate && (array.count == 0) {
-                // remove photo
-                mutableRecord?.imageData = nil
-            } else if array.count > 0 {
-                // currently only support one photo
-                if let dict = array[0] as? [AnyHashable: Any] {
-                    if let value = dict[kW3ContactFieldValue] as? String {
-                        if bUpdate && (value.count == 0) {
-                            // remove the current image
-                            mutableRecord?.imageData = nil
-                        } else {
-                            // use this image
-                            // don't know if string is encoded or not so first unencode it then encode it again
-                            var photoSuccess = false
-                            let cleanPath: String? = value.removingPercentEncoding
-                            let unreserved = "-._~/?"
-                            let allowed = NSMutableCharacterSet.alphanumeric()
-                            allowed.addCharacters(in: unreserved)
-                            // caller is responsible for checking for a connection, if no connection this will fail
-                            if let path = (cleanPath as NSString?)?.addingPercentEncoding(withAllowedCharacters: allowed as CharacterSet) {
-                                if let url = URL(string: path) {
-                                    if let data = try? Data(contentsOf: url, options: .uncached) {
-                                        mutableRecord?.imageData = data
-                                        photoSuccess = true
-                                    }
-                                }
-                            }
-                            if !photoSuccess {
-                                errorCount += 1
-                                print("error setting contact image")
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        
         // TODO WebURLs
-        
+
         // TODO timezone
         print("The count of errors in setFromContactDict were: \(errorCount)")
         return true
     }
-    
+
     /* Set item into an AddressBook Record for the specified property.
      * aValue - the value to set into the address book (code checks for null or [NSNull null]
      * aProperty - AddressBook property ID
@@ -431,7 +294,7 @@ let kW3ContactUrls = "urls"
         }
         return bSuccess
     }
-    
+
     func setValue(_ aValue: Date, forDateProperty aProperty: String, asUpdate bUpdate: Bool) -> Bool {
         var bSuccess = true
         switch aProperty {
@@ -447,7 +310,7 @@ let kW3ContactUrls = "urls"
         }
         return bSuccess
     }
-    
+
     /* Set MultiValue string properties into Address Book Record.
      * NSArray* fieldArray - array of dictionaries containing W3C properties to be set into record
      * ABPropertyID prop - the property to be set (generally used for phones and emails)
@@ -982,10 +845,10 @@ let kW3ContactUrls = "urls"
         default:
             bSuccess = false
         }
-        
+
         return bSuccess
     }
-    
+
     /* Determine which W3C labels need to be converted
      */
     class func needsConversion(_ W3Label: String) -> Bool {
@@ -995,13 +858,13 @@ let kW3ContactUrls = "urls"
         }
         return bConvert
     }
-    
+
     /* Return dictionary where key is contact api label, value is iPhone constant
      */
     class func getTypeLabelConversionTable() -> [String: String] {
         return [kW3ContactWorkLabel: CNLabelWork, kW3ContactHomeLabel: CNLabelHome, kW3ContactOtherLabel: CNLabelOther, kW3ContactPhoneMobileLabel: CNLabelPhoneNumberMobile, kW3ContactPhonePagerLabel: CNLabelPhoneNumberPager, kW3ContactPhoneWorkFaxLabel: CNLabelPhoneNumberWorkFax, kW3ContactPhoneHomeFaxLabel: CNLabelPhoneNumberHomeFax, kW3ContactPhoneIPhoneLabel: CNLabelPhoneNumberiPhone, kW3ContactPhoneMainLabel: CNLabelPhoneNumberMain, kW3ContactImAIMLabel: CNInstantMessageServiceAIM, kW3ContactImICQLabel: CNInstantMessageServiceQQ, kW3ContactImMSNLabel: CNInstantMessageServiceMSN, kW3ContactImYahooLabel: CNInstantMessageServiceYahoo, kW3ContactImSkypeLabel: CNInstantMessageServiceSkype, kW3ContactImGoogleTalkLabel: CNInstantMessageServiceGoogleTalk, kW3ContactImFacebookMessengerLabel: CNInstantMessageServiceFacebook, kW3ContactImJabberLabel: CNInstantMessageServiceJabber, kW3ContactImQQLabel: CNInstantMessageServiceQQ, kW3ContactImGaduLabel: CNInstantMessageServiceGaduGadu, kW3ContactUrlProfile: CNLabelURLAddressHomePage]
     }
-    
+
     /* Translation of property type labels  contact API ---> iPhone
      *
      *    phone:  work, home, other, mobile, home fax, work fax, main, iphone, pager -->
@@ -1029,7 +892,7 @@ let kW3ContactUrls = "urls"
         }
         return type
     }
-    
+
     class func convertType(toContactLabel type: String) -> String {
         var label: String = ""
         let table = CDVContact.getTypeLabelConversionTable()
@@ -1043,7 +906,7 @@ let kW3ContactUrls = "urls"
         }
         return label
     }
-    
+
     /* Check if the input label is a valid W3C ContactField.type. This is used when searching,
      * only search field types if the search string is a valid type.  If we converted any search
      * string to a ABPropertyLabel it could convert to kABOtherLabel which is probably not want
@@ -1058,7 +921,7 @@ let kW3ContactUrls = "urls"
         }
         return isValid
     }
-    
+
     /* Create a new Contact Dictionary object from an ABRecordRef that contains information in a format such that
      * it can be returned to JavaScript callback as JSON object string.
      * Uses:
@@ -1090,7 +953,7 @@ let kW3ContactUrls = "urls"
      * @param {DOMString} timezone UTC time zone offset
      * @param {DOMString} connected
      */
-    
+
     func toDictionary(_ withFields: [AnyHashable: Any]) -> [AnyHashable: Any] {
         // if not a person type record bail out for now
         if nonMutableRecord?.contactType != CNContactType.person {
@@ -1099,7 +962,7 @@ let kW3ContactUrls = "urls"
         var value: Any? = nil
         returnFields = withFields
         var nc = [AnyHashable: Any](minimumCapacity: 1) // new contact dictionary to fill in from ABRecordRef
-        
+
         // id
         nc[kW3ContactId] = nonMutableRecord?.identifier
         if let fields = returnFields {
@@ -1108,13 +971,13 @@ let kW3ContactUrls = "urls"
                 nc[kW3ContactDisplayName] = NSNull()
                 // may overwrite below if requested ContactName and there are no values
             }
-            
+
             // nickname
             if fields[kW3ContactNickname] != nil {
                 value = nonMutableRecord?.nickname
                 nc[kW3ContactNickname] = (value != nil) ? value : NSNull()
             }
-            
+
             // name dictionary
             // NSLog(@"getting name info");
             let data: NSObject? = extractName()
@@ -1129,123 +992,13 @@ let kW3ContactUrls = "urls"
                     nc[kW3ContactDisplayName] = (value != nil) ? value : ""
                 }
             }
-            
+
             // phoneNumbers array
             // NSLog(@"getting phoneNumbers");
             value = extractMultiValue(kW3ContactPhoneNumbers)
             if value != nil {
                 nc[kW3ContactPhoneNumbers] = value
             }
-            
-            // emails array
-            // NSLog(@"getting emails");
-            value = extractMultiValue(kW3ContactEmails)
-            if value != nil {
-                nc[kW3ContactEmails] = value
-            }
-            
-            // urls array
-            value = extractMultiValue(kW3ContactUrls)
-            if value != nil {
-                nc[kW3ContactUrls] = value
-            }
-            
-            // addresses array
-            // NSLog(@"getting addresses");
-            value = extractAddresses()
-            if value != nil {
-                nc[kW3ContactAddresses] = value
-            }
-            
-            // im array
-            // NSLog(@"getting ims");
-            value = extractIms()
-            if value != nil {
-                nc[kW3ContactIms] = value
-            }
-            
-            // organization array (only info for one organization in iOS)
-            // NSLog(@"getting organizations");
-            value = extractOrganizations()
-            if value != nil {
-                nc[kW3ContactOrganizations] = value
-            }
-            
-            // for simple properties, could make this a bit more efficient by storing all simple properties in a single
-            // array in the returnFields dictionary and setting them via a for loop through the array
-            // add dates
-            // NSLog(@"getting dates");
-            var ms: NSNumber?
-            /** Contact Revision field removed from June 16, 2011 version of specification
-             
-             if ([self.returnFields valueForKey:kW3ContactUpdated]){
-             ms = [self getDateAsNumber: kABPersonModificationDateProperty];
-             if (!ms){
-             // try and get published date
-             ms = [self getDateAsNumber: kABPersonCreationDateProperty];
-             }
-             if (ms){
-             [nc setObject:  ms forKey:kW3ContactUpdated];
-             }
-             
-             }
-             */
-            
-            if fields[kW3ContactBirthday] != nil {
-                ms = getDateAsNumber(CNContactBirthdayKey)
-                if ms != nil {
-                    nc[kW3ContactBirthday] = ms
-                }
-            }
-            
-            /*  Anniversary removed from 12-09-2010 W3C Contacts api spec
-             if ([self.returnFields valueForKey:kW3ContactAnniversary]){
-             // Anniversary date is stored in a multivalue property
-             ABMultiValueRef multi = ABRecordCopyValue(self.record, kABPersonDateProperty);
-             if (multi){
-             CFStringRef label = nil;
-             CFIndex count = ABMultiValueGetCount(multi);
-             // see if contains an Anniversary date
-             for(CFIndex i=0; i<count; i++){
-             label = ABMultiValueCopyLabelAtIndex(multi, i);
-             if(label && [(NSString*)label isEqualToString:(NSString*)kABPersonAnniversaryLabel]){
-             CFDateRef aDate = ABMultiValueCopyValueAtIndex(multi, i);
-             if(aDate){
-             [nc setObject: (NSString*)aDate forKey: kW3ContactAnniversary];
-             CFRelease(aDate);
-             }
-             CFRelease(label);
-             break;
-             }
-             }
-             CFRelease(multi);
-             }
-             }*/
-            
-            if fields[kW3ContactNote] != nil {
-                // note
-                value = nonMutableRecord?.note
-                nc[kW3ContactNote] = (value != nil) ? value : NSNull()
-            }
-            
-            if fields[kW3ContactPhotos] != nil {
-                value = extractPhotos()
-                nc[kW3ContactPhotos] = (value != nil) ? value : NSNull()
-            }
-            
-            /* TimeZone removed from June 16, 2011 Contacts spec
-             *
-             if ([self.returnFields valueForKey:kW3ContactTimezone]){
-             [NSTimeZone resetSystemTimeZone];
-             NSTimeZone* currentTZ = [NSTimeZone localTimeZone];
-             NSInteger seconds = [currentTZ secondsFromGMT];
-             NSString* tz = [NSString stringWithFormat:@"%2d:%02u",  seconds/3600, seconds % 3600 ];
-             [nc setObject:tz forKey:kW3ContactTimezone];
-             }
-             */
-            // TODO WebURLs
-            // [nc setObject:[NSNull null] forKey:kW3ContactUrls];
-            // online accounts - not available on iOS
             return nc
         } else {
             // if no returnFields specified, W3C says to return empty contact (but Cordova will at least return id)

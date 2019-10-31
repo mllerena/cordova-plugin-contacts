@@ -50,25 +50,7 @@ class CDVNewContactsController: CNContactViewController {
                                                     CNContactNamePrefixKey as CNKeyDescriptor,
                                                     CNContactNameSuffixKey as CNKeyDescriptor,
                                                     CNContactPhoneNumbersKey as CNKeyDescriptor,
-                                                    CNContactPostalAddressesKey as CNKeyDescriptor,
-                                                    CNPostalAddressStreetKey as CNKeyDescriptor,
-                                                    CNPostalAddressCityKey as CNKeyDescriptor,
-                                                    CNPostalAddressStateKey as CNKeyDescriptor,
-                                                    CNPostalAddressPostalCodeKey as CNKeyDescriptor,
-                                                    CNPostalAddressCountryKey as CNKeyDescriptor,
-                                                    CNContactEmailAddressesKey as CNKeyDescriptor,
-                                                    CNContactInstantMessageAddressesKey as CNKeyDescriptor,
-                                                    CNContactOrganizationNameKey as CNKeyDescriptor,
-                                                    CNContactJobTitleKey as CNKeyDescriptor,
-                                                    CNContactDepartmentNameKey as CNKeyDescriptor,
-                                                    CNContactBirthdayKey as CNKeyDescriptor,
-                                                    CNContactNoteKey as CNKeyDescriptor,
-                                                    CNContactUrlAddressesKey as CNKeyDescriptor,
-                                                    CNContactImageDataKey as CNKeyDescriptor,
-                                                    CNInstantMessageAddressUsernameKey as CNKeyDescriptor,
-                                                    CNInstantMessageAddressServiceKey as CNKeyDescriptor,
-                                                    CNContactTypeKey as CNKeyDescriptor,
-                                                    CNContactImageDataAvailableKey as CNKeyDescriptor]
+                                                    CNContactTypeKey as CNKeyDescriptor]
     
     // overridden to clean up Contact statics
     override func onAppTerminate() {

@@ -20,6 +20,9 @@
 -->
 # Release Notes
 
+### 3.2.0 (Oct 31, 2019)
+* Remove excessive code that was not  working after upgrading to newer Xcode Version 11.1 (11A1027)
+
 ### 3.1.0-cb2 (Jul 8, 2019)
 * Add missing method selector after upgrade to Swift 4.2
 
