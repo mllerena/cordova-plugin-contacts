@@ -62,7 +62,7 @@ Report issues with this plugin on the [Apache Cordova issue tracker](https://iss
 
 This requires cordova 5.0+ ( current stable v1.0.0 )
 
-    cordova plugin add https://github.com/timholbrook/cordova-plugin-contacts.git
+    cordova plugin add https://github.com/codeborne/cordova-plugin-contacts.git
 
 
 ### iOS Quirks
