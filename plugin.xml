@@ -30,8 +30,8 @@
     <description>Cordova Contacts Plugin</description>
     <license>Apache 2.0</license>
     <keywords>cordova,contacts</keywords>
-    <repo>https://github.com/timholbrook/cordova-plugin-contacts.git</repo>
-    <issue>https://github.com/timholbrook/cordova-plugin-contacts/issues</issue>
+    <repo>https://github.com/codeborne/cordova-plugin-contacts.git</repo>
+    <issue>https://github.com/codeborne/cordova-plugin-contacts/issues</issue>
 
     <engines>
         <engine name="cordova-android" version=">=6.2.2" />
