@@ -156,8 +156,11 @@ public class ContactAccessorSdk5 extends ContactAccessor {
         int limit = Integer.MAX_VALUE;
         boolean multiple = true;
         boolean hasPhoneNumber = false;
+           
+        LOG.i(LOG_TAG, "Search Paso 1");
 
         if (options != null) {
+            
             searchTerm = options.optString("filter");
             if (searchTerm.length() == 0) {
                 searchTerm = "%";
@@ -180,17 +183,25 @@ public class ContactAccessorSdk5 extends ContactAccessor {
                 hasPhoneNumber = options.getBoolean("hasPhoneNumber");
             } catch (JSONException e) {
                 // hasPhoneNumber was not specified so we assume the default is false.
+                   LOG.e(LOG_TAG, e.getMessage(), e);
             }
+               
+               LOG.i(LOG_TAG, "Search Paso 1.1");
         }
         else {
+               LOG.i(LOG_TAG, "Search Paso 1.2");
             searchTerm = "%";
         }
 
         // Loop through the fields the user provided to see what data should be returned.
         HashMap<String, Boolean> populate = buildPopulationSet(options);
+           
+        LOG.i(LOG_TAG, "Search Paso 2");
 
         // Build the ugly where clause and where arguments for one big query.
         WhereOptions whereOptions = buildWhereClause(fields, searchTerm, hasPhoneNumber);
+           
+           LOG.i(LOG_TAG, "Search Paso 2.1");
 
         // Get all the id's where the search term matches the fields passed in.
         Cursor idCursor = mApp.getActivity().getContentResolver().query(ContactsContract.Data.CONTENT_URI,
@@ -198,6 +209,9 @@ public class ContactAccessorSdk5 extends ContactAccessor {
                 whereOptions.getWhere(),
                 whereOptions.getWhereArgs(),
                 ContactsContract.Data.CONTACT_ID + " ASC");
+           
+           
+           LOG.i(LOG_TAG, "Search Paso 3");
 
         // Create a set of unique ids
         Set<String> contactIds = new HashSet<String>();
@@ -209,6 +223,8 @@ public class ContactAccessorSdk5 extends ContactAccessor {
             contactIds.add(idCursor.getString(idColumn));
         }
         idCursor.close();
+           
+           LOG.i(LOG_TAG, "Search Paso 3.1 "+idCursor);
 
         // Build a query that only looks at ids
         WhereOptions idOptions = buildIdClause(contactIds, searchTerm, hasPhoneNumber);
@@ -284,6 +300,8 @@ public class ContactAccessorSdk5 extends ContactAccessor {
         if (isRequired("photos", populate)) {
             columnsToFetch.add(CommonDataKinds.Photo._ID);
         }
+           
+           LOG.i(LOG_TAG, "Search Paso 3.2 "+idCursor);
 
         // Do the id query
         Cursor c = mApp.getActivity().getContentResolver().query(ContactsContract.Data.CONTENT_URI,
@@ -293,6 +311,9 @@ public class ContactAccessorSdk5 extends ContactAccessor {
                 ContactsContract.Data.CONTACT_ID + " ASC");
 
         JSONArray contacts = populateContactArray(limit, populate, c);
+           
+           
+           LOG.i(LOG_TAG, "Search Paso 4 "+contacts);
 
         if (!c.isClosed()) {
             c.close();
