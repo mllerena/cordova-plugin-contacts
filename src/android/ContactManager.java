@@ -211,7 +211,11 @@ public class ContactManager extends CordovaPlugin {
         this.cordova.getThreadPool().execute(new Runnable() {
             public void run() {
                 JSONArray res = contactAccessor.search(filter, options);
-                callbackContext.success(res);
+                //callbackContext.success(res);
+		//send and keep reference to callback
+                PluginResult result = new PluginResult(PluginResult.Status.OK, res);
+                result.setKeepCallback(true);
+                callbackContext.sendPluginResult(result);
             }
         });
     }
